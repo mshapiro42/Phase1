@@ -2,7 +2,7 @@
 #define RIGHT_JOYSTICK A0
 #define ESTOP 6
 
-uint16_t left_read, right_read; 
+uint16_t left_read, right_read;
 uint8_t left_value, right_value, left_value_p, right_value_p;
 
 
@@ -12,7 +12,7 @@ const int status_LED = 13;
 void setup() {
   // put your setup code here, to run once:
   left_value_p = 127;
-right_value_p = 127;
+  right_value_p = 127;
   SerialUSB.begin(9600);
 
   while (!SerialUSB);
@@ -34,8 +34,8 @@ void loop() {
   // put your main code here, to run repeatedly:
   left_read = analogRead(LEFT_JOYSTICK);
   right_read = analogRead(RIGHT_JOYSTICK);
-  left_value = map(left_read,0,1023,0,255);
-  right_value = map(right_read,0,1023,0,255);
+  left_value = map(left_read, 0, 1023, 0, 255);
+  right_value = map(right_read, 0, 1023, 0, 255);
   if (SerialUSB.available()) {
     c_data = SerialUSB.read();
     Serial1.print(c_data);
@@ -50,8 +50,14 @@ void loop() {
     SerialUSB.print(left_value);
     SerialUSB.print(" ");
     SerialUSB.println(right_value);
-    Serial1.println(left_value);
-    Serial1.println(right_value);
+    if (left_value != left_value_p) {
+      Serial1.print("l");
+      Serial1.print(left_value);
+    }
+    if (right_value != right_value_p) {
+      Serial1.print("r");
+      Serial1.print(right_value);
+    }
   }
   delay(100);
   digitalWrite(status_LED, LOW);
