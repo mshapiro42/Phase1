@@ -15,7 +15,7 @@ void setup() {
   right_value_p = 127;
   SerialUSB.begin(9600);
 
-  while (!SerialUSB);
+  //while (!SerialUSB);
   Serial1.begin(9600);
 
   pinMode(status_LED, OUTPUT);
@@ -51,12 +51,12 @@ void loop() {
     SerialUSB.print(" ");
     SerialUSB.println(right_value);
     if (left_value != left_value_p) {
-      Serial1.print("l");
-      Serial1.print(left_value);
+      Serial1.write("l");
+      Serial1.write(left_value);
     }
     if (right_value != right_value_p) {
-      Serial1.print("r");
-      Serial1.print(right_value);
+      Serial1.write("r");
+      Serial1.write(right_value);
     }
   }
   delay(100);

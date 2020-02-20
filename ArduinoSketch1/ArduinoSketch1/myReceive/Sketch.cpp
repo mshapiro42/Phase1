@@ -1,5 +1,16 @@
+﻿/*Begining of Auto generated code by Atmel studio */
+#include <Arduino.h>
+
+/*End of auto generated code by Atmel studio */
+
 // SoftwareSerial is used to communicate with the XBee
 #include <SoftwareSerial.h>
+//Beginning of Auto generated function prototypes by Atmel Studio
+void motor(int m, int pwm);
+int ASCIItoInt(char c);
+//End of Auto generated function prototypes by Atmel Studio
+
+
 
 #define pwmA 3
 #define dirA 12
@@ -32,18 +43,61 @@ void loop()
 {
   // In loop() we continously check to see if a command has been
   //  received.
+  /*pushValue = digitalRead(pushButton);
+    if (pushValue == 0) {
+    while (digitalRead(pushButton) == 0);
+    systemState = !systemState;
+    if (systemState) {
+      Serial.println("System On!");
+    } else{
+      Serial.println("System Off!");
+    }
+    }*/
+  /*if (systemState = true) {
+
+      char c = XBee.read();
+      while(XBee.available() < 6);
+      left_read = XBee.read();
+      right_read = XBee.read();
+      //Serial.print("Left Receive: ");
+      Serial.print(left_read);
+      Serial.println(" ");
+      //Serial.print("  Right Receive: ");
+      Serial.println(right_read);
+      left_value = map(left_read, 0, 255, -255, 255);
+      right_value = map(right_read, 0, 255, -255, 255);
+      motor(B, left_value);
+      motor(A, right_value);
+    }
+    }
+    else {
+    motor(A, 0);
+    motor(B, 0);
+    }*/
+   
   if (XBee.available()>=2) {
     c = XBee.read();
-    num = map(XBee.read(),0,255,-255,255);
+    num = XBee.read();
     //Serial.write(c);
     //Serial.println(num);
     switch (c) {
       case 'l':
-        motor(B, num);
+        Serial.print("Left ");
+        Serial.println(num);
         break;
+       /* while(!(XBee.available()));
+        c = XBee.read();
+        motor(B, ASCIItoInt(c));
+        break;*/
       case 'r':
-        motor(A, num);
+        Serial.print("\t\t");
+        Serial.print("Right ");
+        Serial.println(num);
         break;
+        /*while(!(XBee.available()));
+        c = XBee.read();
+        motor(A, ASCIItoInt(c));
+        break;*/
       default:
         Serial.println("error");
         break;
@@ -54,21 +108,15 @@ void loop()
 ///////////////////////////////////
 void motor(int m, int pwm) {
   int dirPin, pwmPin, deadband;
-  Serial.print(m);
-  Serial.print(" ");
-  Serial.println(pwm);
-        
   switch (m) {
     case A:
       dirPin = dirA;
       pwmPin = pwmA;
       deadband = deadbandA;
-      break;
     case B:
       dirPin = dirB;
       pwmPin = pwmB;
       deadband = deadbandB;
-      break;
   }
   digitalWrite(dirPin, (pwm >= 0));
   if (abs(pwm) >=  deadband) {

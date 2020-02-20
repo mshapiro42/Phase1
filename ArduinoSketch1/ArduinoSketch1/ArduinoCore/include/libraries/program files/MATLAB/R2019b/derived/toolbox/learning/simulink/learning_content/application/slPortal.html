@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html class="mainPage">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>Simulink Course</title>
+
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    <link rel="stylesheet" href="../web/mw-academy-web/css/training.webwidget.css" />
+    <link rel="stylesheet" href="../web/mw-academy-web/css/training.motw.app.css" />
+    <!--[if IE 9]>
+    <link rel="stylesheet" href="../web/mw-academy-web/css/training.motw.overrides.ie9.css" type="text/css"/>
+    <![endif]-->
+    <link rel="stylesheet" href="../web/mw-academy-web/css/training.app.css" />
+
+    <!--  Mobile viewport optimized: j.mp/bplateviewport -->
+    <meta name="viewport" content="initial-scale=1.0">
+
+</head>
+<body class="tundra" data-content="../content/">
+
+<div id="trainingApp">
+    <div id="courseView"></div>
+</div>
+
+<!-- load Dojo -->
+<script src="dojoConfig-sl-release.js"></script>
+<script src="../web/dojo/dojo.js"></script>
+<script>
+    require(["mw-academy-web/AcademyApp"], function (AcademyApp) {
+        require(["mw-utils/BrowserCheck!unsupported_browser_error.html"], function () {
+            new AcademyApp({
+                isSimulinkCourse: true
+            });
+
+            try{Typekit.load();}catch(e){}
+
+            require(["dojo/request/script"], function (script) {
+                window.requestAnimationFrame(function () {
+                    script.get("https://www.mathworks.com/scripts/dtm/d0cc0600946eb3957f703b9fe43c3590597a8c2c/satelliteLib-e8d23c2e444abadc572df06537e2def59c01db09.js");
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

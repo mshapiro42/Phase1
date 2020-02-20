@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<!-- Iframe to mock the messages that are posted to and returned from the LRS service -->
+<!-- (Simulink courses) -->
+
+<html>
+<head>
+	<title>Mock messages to and from LRS</title>
+
+	<script>
+	
+		if (window.addEventListener) {
+			// For standards-compliant web browsers
+			window.addEventListener("message", processMessage, false);
+			
+		}
+		else {
+			window.attachEvent("onmessage", processMessage);
+		}
+		
+		function processMessage (evt) {
+
+			var dataObj = JSON.parse(evt.data);
+
+			if (!dataObj.hasOwnProperty("statements") && !dataObj.hasOwnProperty("payload")) {
+			    return
+			}
+
+			var messageObj = dataObj.payload,
+				messageType = dataObj.method,
+				user,
+				storedData,
+				payload;
+
+            if (messageType === "sendStatements") {
+                user = messageObj.actor.name;
+            } else if (messageType === "getStatements") {
+                var agentField = JSON.parse(messageObj.agent);
+                user = agentField.name;
+            } else {
+                user  = "";
+            }
+
+            user = user.replace(" ","_");
+            storedData = getDataForUser(user);
+
+			if (messageType === "sendStatements") {
+				payload = buildPostStatementResponse(messageObj);
+				var newUserData = payload.statements[0];
+
+                storedData.statements.push(addMissingUserData(newUserData));
+				
+			    localStorage.setItem(user,JSON.stringify(storedData));
+			} else if (messageType === "getStatements") {
+			    payload = storedData;
+            }
+
+            payload["uuid"] = dataObj.uuid;
+            parent.postMessage(JSON.stringify(payload), "*");
+
+            return payload;
+        }
+		
+		function getDataForUser(user){
+            var localUserData = localStorage.getItem(user);
+            var userData;
+
+            if (!localUserData) {
+                userData = {
+                    "statements" : [],
+                    "more" : null
+                };
+            } else {
+                userData = JSON.parse(localUserData);
+			}
+            return userData;
+		}
+		
+		function addMissingUserData(newUserData) {
+		
+				newUserData.stored = new Date().toISOString();
+				newUserData.authority = {
+						"name": null,
+						"mbox": null,
+						"mbox_sha1sum": null,
+						"openid": null,
+						"account": {
+							"homePage": "https://lrs.mathworks.com",
+							"name": "matlab-academy"
+						},
+						"objectType": "Agent"
+					};
+					
+				return newUserData;
+		}
+		
+	
+        buildPostStatementResponse = function (messageObj) {
+
+            var statements = {
+                "id": null,
+                "timestamp": null,
+                "stored": null,
+                "version": null,
+                "verb": {}, // fully specified by request
+                "actor": { // account, objectType, and name are specified
+                    "name": "",
+                    "mbox": null,
+                    "mbox_sha1sum": null,
+                    "openid": null,
+                    "account": {},
+                    "objectType": ""
+                },
+                "object": { //objectType, id, definition are specified
+                    "id": "",
+                    "definition": { //only name, description and type are specified
+                        "type": "",
+                        "moreInfo": null,
+                        "interactionType": null,
+                        "correctResponsesPattern": null,
+                        "extensions": null,
+                        "name": {
+                            "en-US": ""
+                        },
+                        "description": {
+                            "en-US": ""
+                        },
+                        "choices": null,
+                        "scale": null,
+                        "source": null,
+                        "target": null,
+                        "steps": null
+                    },
+                    "objectType": ""
+                },
+                "result": null,
+                "context": {
+                    "registration": null,
+                    "revision": null,
+                    "platform": null,
+                    "language": null,
+                    "instructor": null,
+                    "team": null,
+                    "statement": null,
+                    "contextActivities": {
+                        "parent": [{ // objectType, id, definition
+                            "id": "",
+                            "definition": { // name, description, type are specified
+                                "type": "",
+                                "moreInfo": null,
+                                "interactionType": null,
+                                "correctResponsesPattern": null,
+                                "extensions": null,
+                                "name": {
+                                    "en-US": ""
+                                },
+                                "description": {
+                                    "en-US": ""
+                                },
+                                "choices": null,
+                                "scale": null,
+                                "source": null,
+                                "target": null,
+                                "steps": null
+                            },
+                            "objectType": ""
+                        }],
+                        "other": [{ // objectType, id, definition
+                            "id": "",
+                            "definition": { // name, description, type are specified
+                                "type": "",
+                                "moreInfo": null,
+                                "interactionType": null,
+                                "correctResponsesPattern": null,
+                                "extensions": null,
+                                "name": {
+                                    "en-US": ""
+                                },
+                                "description": {
+                                    "en-US": ""
+                                },
+                                "choices": null,
+                                "scale": null,
+                                "source": null,
+                                "target": null,
+                                "steps": null
+                            },
+                            "objectType": ""
+                        }],
+                        "grouping": null,
+                        "category": null
+                    },
+                    "extensions": null
+                },
+                "authority": null,
+                "attachments": null
+            };
+
+            // Mix in the values contained in messageObj
+			statements = Object.assign(statements,messageObj);
+            statements.id = '0a0a0a0a-a0aa-000a-0000-00a00aa00a00'; // dummy UUID
+
+            return {
+                "statements" : [statements],
+                "more" : null
+            };
+        };
+	</script>
+</head>
+
+<body>
+</body>
+</html>

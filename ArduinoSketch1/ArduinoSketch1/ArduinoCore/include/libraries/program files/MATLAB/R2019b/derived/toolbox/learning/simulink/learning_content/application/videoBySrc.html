@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" charset="utf-8">
+
+    <style>
+        html,body {
+            margin:0;
+            padding:0;
+        }
+
+        #videoPlayer {
+            margin: auto;
+        }
+
+        .video-js {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        body.vjs-full-window {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        .video-js.vjs-fullscreen {
+            position: fixed;
+            overflow: hidden;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .video-js:-webkit-full-screen {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .video-js.vjs-fullscreen.vjs-user-inactive {
+            cursor: none;
+        }
+        #videoPlayer.vjs-error .vjs-error-display {
+            display:none;
+        }
+        .vjs-big-play-button {
+            display:none;
+        }
+
+    </style>
+</head>
+<body>
+
+<video
+        id="videoPlayer"
+        data-account="2757720781001"
+        data-player="3fe71567-b8fe-4b76-9097-74c8cb4b3d87"
+        data-embed="default"
+        class="video-js"
+        controls>
+</video>
+<script src="https://players.brightcove.net/2757720781001/3fe71567-b8fe-4b76-9097-74c8cb4b3d87_default/index.min.js"></script>
+
+<script>
+    function getQueryParams(qs) {
+        qs = qs.split("+").join(" ");
+
+        var params = {}, tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])]
+                = decodeURIComponent(tokens[2]);
+        }
+        return params;
+    }
+
+    // Escape key to exit full screen
+    document.onkeydown = function(evt) {
+        evt = evt || window.event;
+        if (evt.keyCode == 27 && document.webkitIsFullScreen) {
+            document.webkitExitFullscreen();
+        }
+    };
+
+    var qps = getQueryParams(document.location.search);
+
+    var videoPlayerObj = videojs("videoPlayer");
+    videoPlayerObj.src({
+        type: "video/webm",
+        src: qps.videoUrl
+    });
+
+    videoSize();
+
+    videoPlayerObj.ready(function(){
+        if(qps.play !== "false"){
+            videoPlayerObj.play();
+        }
+    });
+
+    window.addEventListener("resize", videoSize); //register listener for resize
+
+    function videoSize() {
+        var videoDiv, innerVideoDiv;
+        var margin, windowWidth, windowHeight, windowRatio, videoDivWidth, videoDivHeight;
+        var aspectRatio = 0.5625;  // Hardcode 16:9 aspect ratio since we cannot access metadata for a remote asset
+
+        videoDiv = document.getElementById("videoPlayer");
+
+        innerVideoDiv = document.getElementById("videoPlayer_html5_api"); //get the inner components for <video> autocreated by BrightcoveAPI
+
+        if(innerVideoDiv){
+            innerVideoDiv.removeAttribute("style"); //remove the default height and width for actual video
+        }
+
+        videoDiv.removeAttribute("style");	//remove the default height and width of the <video>
+
+        margin = 5;
+        windowWidth = window.innerWidth - 2*margin;
+        windowHeight = window.innerHeight - 2*margin;
+        videoDivWidth = windowWidth;
+        videoDivHeight = windowHeight;
+
+        //Calculator:
+        windowRatio = 	windowHeight / windowWidth ; //Image Aspect ratio Height:Width = 3:4 or 0.75
+
+        if (windowRatio >= aspectRatio){
+            videoDivHeight = (videoDivWidth)*aspectRatio;
+            videoDiv.setAttribute("style", "height:"+videoDivHeight +"px;width:"+videoDivWidth+"px;");
+        } else{
+            videoDivWidth = videoDivHeight/aspectRatio;
+            videoDiv.setAttribute("style", "width:"+videoDivWidth+"px;height:"+videoDivHeight+"px")
+        }
+    }
+
+
+</script>
+
+</body>
+</html>

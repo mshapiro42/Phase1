@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html class="mainPage">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>Simulink Task Navigator</title>
+
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    <link rel="stylesheet" href="../web/mw-academy-web/css/training.webwidget.css" />
+    <link rel="stylesheet" href="../web/mw-academy-web/css/training.motw.app.css" />
+    <!--[if IE 9]>
+    <link rel="stylesheet" href="../web/mw-academy-web/css/training.motw.overrides.ie9.css" type="text/css"/>
+    <![endif]-->
+    <link rel="stylesheet" href="../web/mw-academy-web/css/training.app.css" />
+
+    <!--  Mobile viewport optimized: j.mp/bplateviewport -->
+    <meta name="viewport" content="initial-scale=1.0">
+
+
+
+</head>
+
+<body class="tundra keyboardNavigation" data-content="../content/">
+
+
+<div id="trainingApp">
+    <div id="taskNavPlace" class="descriptionContentPane problemDescriptionContainer lectureContent"><div id="taskPanePreloader"></div></div>
+</div>
+
+<!-- load Dojo -->
+<script src="dojoConfig-sl-release.js"></script>
+<script src="../web/dojo/dojo.js"></script>
+
+<script>
+    require(["academyinteractions/SimulinkTaskPaneApp"], function (SimulinkTaskPaneApp) {
+        new SimulinkTaskPaneApp();
+    });
+</script>
+<script>require(["MWTraining/lecture/ContentFormatter"]);</script>
+</body>
+</html>
